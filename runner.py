@@ -42,16 +42,18 @@ def main():
             to_add[acct_group_id]=list()
         to_add[acct_group_id].append(acct_id) #for every account group, figure out all accounts that need to be added to it, instead of adding one at a time
                                               #This lets us call the API only once per account group, instead of once per account that needs to be added
-        
+    print(to_add)
     for group,accts_list in to_add.items():
         resp=sess.interact('get','/cloud/group/%s'%(group))#get all accounts currently in group, so we can keep them
         json_data=json.loads(resp.text)
+        print(accts_list)
         accts_in_group=json_data['accountIds']
         accts_in_group.extend(accts_list) #add all accounts from csv file
-        update_data={'id':acct_group_id,        
-                     'name':acct_group_id_to_name[acct_group_id],
+        update_data={'id':group,        
+                     'name':acct_group_id_to_name[group],
                      'accountIds':accts_in_group}
-        resp=sess.interact('put','/cloud/group/%s'%(acct_group_id),reqbody=update_data)
+        print(update_data)
+        resp=sess.interact('put','/cloud/group/%s'%(group),reqbody=update_data)
     print('Done')
     
     
